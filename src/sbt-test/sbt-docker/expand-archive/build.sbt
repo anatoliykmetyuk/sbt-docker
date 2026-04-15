@@ -1,3 +1,4 @@
+import sbtcompat.PluginCompat._
 import sbtdocker.immutable
 
 enablePlugins(DockerPlugin)
@@ -8,7 +9,7 @@ organization := "sbtdocker"
 
 version := "0.1.0"
 
-docker / dockerfile := {
+docker / dockerfile := Def.uncached {
   val archive = file("archive.tgz")
   immutable.Dockerfile.empty
     .from("busybox")
@@ -18,7 +19,7 @@ docker / dockerfile := {
 
 val check = taskKey[Unit]("Check")
 
-check := {
+check := Def.uncached {
   val process = scala.sys.process.Process("docker", Seq("run", "--rm", (docker / imageNames).value.head.toString))
   val out = process.!!
   if (out.trim != "file") sys.error("Unexpected output: " + out)

@@ -1,5 +1,9 @@
 enablePlugins(DockerPlugin)
 
+import sbt.Keys.fileConverter
+import sbtcompat.PluginCompat._
+import xsbti.FileConverter
+
 name := "build-arguments"
 
 organization := "sbtdocker"
@@ -7,19 +11,21 @@ organization := "sbtdocker"
 version := "0.1.0"
 
 // Define a Dockerfile
-docker / dockerfile := {
-  val jarFile = (Compile / packageBin / Keys.`package`).value
+docker / dockerfile := Def.uncached {
+  implicit val conv: FileConverter = fileConverter.value
+  val jarFile = sbtcompat.PluginCompat.toFile((Compile / packageBin / Keys.`package`).value)
   val classpath = (Compile / managedClasspath).value
   val mainclass = (Compile / packageBin / mainClass).value.getOrElse {
     sys.error("Expected exactly one main class")
   }
   val jarTarget = s"/app/${jarFile.getName}"
-  // Add all files on the classpath
-  val files = classpath.files.map(file => file -> s"/app/${file.getName}").toMap
-  // Make a colon separated classpath with the JAR file
-  val classpathString = files.values.mkString(":") + ":" + jarTarget
+  val libFiles = classpath.map { attr =>
+    val f = sbtcompat.PluginCompat.toFile(attr)
+    f -> s"/app/${f.getName}"
+  }.toMap
+  val classpathString = libFiles.values.mkString(":") + ":" + jarTarget
   new Dockerfile {
-    from("openjdk:8-jre")
+    from("eclipse-temurin:17-jre")
     arg("buildArgument1")
     arg("buildArgument2")
     arg("buildArgument3", Some("default Value3"))
@@ -29,19 +35,17 @@ docker / dockerfile := {
       "buildArgument3" -> "$buildArgument3"
     ))
 
-    // Copy all files that is on the classpath
-    files.foreach {
+    libFiles.foreach {
       case (source, destination) =>
         copy(source, destination)
     }
-    // Copy the JAR and set the entry point
     copy(jarFile, jarTarget)
     entryPoint("java", "-cp", classpathString, mainclass)
   }
 }
 
 // Set a custom image name
-docker / imageNames := {
+docker / imageNames := Def.uncached {
   val imageName = ImageName(namespace = Some(organization.value), repository = name.value, tag = Some("v" + version.value))
   Seq(imageName, imageName.copy(tag = Some("latest")))
 }
@@ -53,7 +57,7 @@ docker / dockerBuildArguments := Map(
 
 val check = taskKey[Unit]("Check")
 
-check := {
+check := Def.uncached {
   val names = (docker / imageNames).value
   names.foreach { imageName =>
     val process = scala.sys.process.Process("docker", Seq("run", "--rm", imageName.toString))

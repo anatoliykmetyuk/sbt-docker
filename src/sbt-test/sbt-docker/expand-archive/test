@@ -1,4 +1,4 @@
 $ exec tar -czf archive.tgz dir
 > docker
-$ exists target/docker/Dockerfile
+$ exists target/**/docker/Dockerfile
 > check

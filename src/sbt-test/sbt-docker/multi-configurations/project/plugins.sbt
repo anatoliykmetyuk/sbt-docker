@@ -1,3 +1,5 @@
+addSbtPlugin("com.github.sbt" % "sbt2-compat" % "0.1.0")
+
 {
   sys.props.get("plugin.version") match {
     case Some(v) =>

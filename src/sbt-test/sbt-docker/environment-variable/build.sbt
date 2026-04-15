@@ -1,3 +1,5 @@
+import sbtcompat.PluginCompat._
+
 enablePlugins(DockerPlugin)
 
 name := "environment-variable"
@@ -8,7 +10,7 @@ version := "0.1.0"
 
 val environmentValue = "b=c 'd|!@#$%^&*(\")e"
 
-docker / dockerfile := {
+docker / dockerfile := Def.uncached {
   new Dockerfile {
     from("busybox")
     env("a"-> environmentValue, "b" -> "value")
@@ -17,7 +19,7 @@ docker / dockerfile := {
 }
 
 val check = taskKey[Unit]("Check")
-check := {
+check := Def.uncached {
   val process = scala.sys.process.Process("docker", Seq("run", "--rm", (docker / imageNames).value.head.toString))
   val out = process.!!
   if (out.trim != environmentValue) sys.error("Unexpected output: " + out)

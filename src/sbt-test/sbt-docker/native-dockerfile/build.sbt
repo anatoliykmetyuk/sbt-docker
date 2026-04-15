@@ -1,3 +1,5 @@
+import sbtcompat.PluginCompat._
+
 enablePlugins(DockerPlugin)
 
 name := "scripted-dockerfile-file"
@@ -7,10 +9,10 @@ organization := "sbtdocker"
 version := "0.1.0"
 
 // Define a Dockerfile
-docker / dockerfile := NativeDockerfile(file("Dockerfile"))
+docker / dockerfile := Def.uncached(NativeDockerfile(file("Dockerfile")))
 
 // Set a custom image name
-docker / imageNames := {
+docker / imageNames := Def.uncached {
   val imageName = ImageName(
     namespace = Some(organization.value),
     repository = name.value,
@@ -20,7 +22,7 @@ docker / imageNames := {
 
 val check = taskKey[Unit]("Check")
 
-check := {
+check := Def.uncached {
   val names = (docker / imageNames).value
   names.foreach { imageName =>
     val process = scala.sys.process.Process("docker", Seq("run", "--rm", imageName.toString))

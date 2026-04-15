@@ -1,3 +1,4 @@
+import sbtcompat.PluginCompat._
 import java.nio.file.Files
 import java.nio.file.attribute.PosixFilePermissions
 
@@ -9,7 +10,7 @@ organization := "sbtdocker"
 
 version := "0.1.0"
 
-docker / dockerfile := {
+docker / dockerfile := Def.uncached {
   new Dockerfile {
     from("busybox")
     copy(file("files"), "/files")
@@ -27,7 +28,7 @@ val filePermissions = Map(
 )
 
 val createSourceFiles = taskKey[Unit]("Create source files")
-createSourceFiles := {
+createSourceFiles := Def.uncached {
   val sourceDir = file("files")
   sourceDir.mkdir()
 
@@ -46,7 +47,7 @@ createSourceFiles := {
 }
 
 val check = taskKey[Unit]("Check")
-check := {
+check := Def.uncached {
   val name = (docker / imageNames).value.head
   val process = scala.sys.process.Process("docker", Seq("run", "--rm", name.toString))
   val out = process.!!

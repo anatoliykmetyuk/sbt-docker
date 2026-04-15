@@ -1,3 +1,5 @@
+import sbtcompat.PluginCompat._
+
 enablePlugins(DockerPlugin)
 
 name := "scripted-check-label"
@@ -8,7 +10,7 @@ version := "0.1.0"
 
 val labelValue = "b=c 'd|!@#$%^&*(\")e"
 
-docker / dockerfile := {
+docker / dockerfile := Def.uncached {
   new Dockerfile {
     from("busybox")
     label("com.example.key" -> labelValue, "b" -> "value")
@@ -16,7 +18,7 @@ docker / dockerfile := {
 }
 
 val check = taskKey[Unit]("Check")
-check := {
+check := Def.uncached {
   val imagesWithLabel = scala.sys.process.Process("docker", Seq("images", "--filter", s"""label=com.example.key=$labelValue"""))
   val out = imagesWithLabel.!!
   val firstImageName = (docker / imageNames).value.head
