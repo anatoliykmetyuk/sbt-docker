@@ -75,8 +75,8 @@ class DockerfileLikeSuite extends AnyFunSuite with Matchers {
     val predefined = immutable.Dockerfile(allInstructions)
 
     val withAddInstruction =
-      allInstructions.foldLeft(immutable.Dockerfile.empty) {
-        case (dockerfile, instruction) => dockerfile.addInstruction(instruction)
+      allInstructions.foldLeft(immutable.Dockerfile.empty) { case (dockerfile, instruction) =>
+        dockerfile.addInstruction(instruction)
       }
 
     withAddInstruction shouldEqual predefined
@@ -196,4 +196,5 @@ class DockerfileLikeSuite extends AnyFunSuite with Matchers {
 
     dockerfile shouldEqual immutable.Dockerfile.empty.maintainer("test")
   }
+
 }

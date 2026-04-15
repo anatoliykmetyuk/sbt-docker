@@ -10,10 +10,10 @@ import scala.concurrent.duration.FiniteDuration
 
 sealed trait DockerfileBase
 
-/**
-  * Reference to an existing Dockerfile in the filesystem.
+/** Reference to an existing Dockerfile in the filesystem.
   *
-  * @param path Filesystem path to the Dockerfile.
+  * @param path
+  *   Filesystem path to the Dockerfile.
   */
 case class NativeDockerfile(path: File) extends DockerfileBase
 
@@ -35,49 +35,51 @@ trait DockerfileCommands {
   @deprecated("Use stageFile instead.", "0.4.0")
   def copyToStageDir(source: File, targetRelativeToStageDir: File): T = stageFile(source, targetRelativeToStageDir)
 
-  /**
-    * Stage a file. The file will be copied to the stage directory when the Dockerfile is built.
+  /** Stage a file. The file will be copied to the stage directory when the Dockerfile is built.
     *
-    * The `target` file must be unique for this Dockerfile. Otherwise later staged files will overwrite previous
-    * files on the same target.
+    * The `target` file must be unique for this Dockerfile. Otherwise later staged files will overwrite previous files on the same target.
     *
-    * @param source File to copy into stage dir.
-    * @param target Path to copy file to, should be relative to the stage dir.
+    * @param source
+    *   File to copy into stage dir.
+    * @param target
+    *   Path to copy file to, should be relative to the stage dir.
     */
   def stageFile(source: File, target: File): T = {
     addInstruction(Instructions.StageFiles(CopyFile(source), target.getPath))
   }
 
-  /**
-    * Stage a file. The file will be copied to the stage directory when the Dockerfile is built.
+  /** Stage a file. The file will be copied to the stage directory when the Dockerfile is built.
     *
     * If the `target` ends with / then the source filename will be added at the end.
     *
-    * The `target` file must be unique for this Dockerfile. Otherwise later staged files will overwrite previous
-    * files on the same target.
+    * The `target` file must be unique for this Dockerfile. Otherwise later staged files will overwrite previous files on the same target.
     *
-    * @param source File to copy into stage dir.
-    * @param target Path to copy file to, should be relative to the stage dir.
+    * @param source
+    *   File to copy into stage dir.
+    * @param target
+    *   Path to copy file to, should be relative to the stage dir.
     */
   def stageFile(source: File, target: String): T = {
     addInstruction(Instructions.StageFiles(CopyFile(source), target))
   }
 
-  /**
-    * Stages a multiple files.
+  /** Stages a multiple files.
     *
-    * @param sources What to stage.
-    * @param target Destination directory in the staging directory.
+    * @param sources
+    *   What to stage.
+    * @param target
+    *   Destination directory in the staging directory.
     */
   def stageFiles(sources: Seq[File], target: String): T = {
     addInstruction(Instructions.StageFiles(sources.map(CopyFile), target))
   }
 
-  /**
-    * Stages a single source.
+  /** Stages a single source.
     *
-    * @param source What to stage.
-    * @param target Destination path in the staging directory.
+    * @param source
+    *   What to stage.
+    * @param target
+    *   Destination path in the staging directory.
     */
   def stageFile(source: SourceFile, target: String): T = addInstruction(StageFiles(source, target))
 
@@ -102,9 +104,7 @@ trait DockerfileCommands {
 
   def maintainer(name: String, email: String): T = addInstruction(Maintainer(s"$name <$email>"))
 
-  /**
-    * Execute a command in the image.
-    * Uses exec form. Which means the command will not be executed in a shell.
+  /** Execute a command in the image. Uses exec form. Which means the command will not be executed in a shell.
     *
     * Example:
     * {{{
@@ -112,16 +112,15 @@ trait DockerfileCommands {
     * }}}
     * this will yield the raw instruction `RUN ["executable", "parameter1", "parameter 2"]`.
     *
-    * @param args An executable followed by eventual parameters.
+    * @param args
+    *   An executable followed by eventual parameters.
     */
   def run(args: String*): T = {
     if (args.nonEmpty) addInstruction(Instructions.Run.exec(args))
     else self
   }
 
-  /**
-    * Execute a command in the image.
-    * The command will be executed through a shell (`/bin/sh`).
+  /** Execute a command in the image. The command will be executed through a shell (`/bin/sh`).
     *
     * Example:
     * {{{
@@ -129,15 +128,15 @@ trait DockerfileCommands {
     * }}}
     * this will yield the raw instruction `RUN executable parameter1 parameter\ 2`.
     *
-    * @param args A command followed by eventual parameters.
+    * @param args
+    *   A command followed by eventual parameters.
     */
   def runShell(args: String*): T = {
     if (args.nonEmpty) addInstruction(Instructions.Run.shell(args))
     else self
   }
 
-  /**
-    * Execute a command in the image.
+  /** Execute a command in the image.
     *
     * Example:
     * {{{
@@ -145,7 +144,8 @@ trait DockerfileCommands {
     * }}}
     * this will yield the raw instruction `RUN executable parameter1 parameter 2`.
     *
-    * @param command A command including parameters (on shell or exec form).
+    * @param command
+    *   A command including parameters (on shell or exec form).
     */
   def runRaw(command: String): T = addInstruction(Instructions.Run(command))
 
@@ -312,11 +312,10 @@ trait DockerfileCommands {
 
   def healthCheckNone(): T = addInstruction(HealthCheckNone)
 
-  /**
-    * Adds a custom Dockerfile instruction that is not currently supported by this DSL.
+  /** Adds a custom Dockerfile instruction that is not currently supported by this DSL.
     *
     * @example
-    * {{{
+    *   {{{
     *   // Copy in a multi-stage Dockerfile
     *   // Equivalent to: "COPY --from=stage1 /path/to/file /path/to/file"
     *   customInstruction("COPY", "--from=stage1 /path/to/file /path/to/file")
@@ -324,7 +323,7 @@ trait DockerfileCommands {
     *   // Onbuild instruction can be represented as:
     *   // ONBUILD RUN /usr/local/bin/python-build --dir /app/src
     *   customInstruction("ONBUILD", "RUN /usr/local/bin/python-build --dir /app/src")
-    * }}}
+    *   }}}
     */
   def customInstruction(instructionName: String, arguments: String): T = addInstruction(Raw(instructionName, arguments))
 }

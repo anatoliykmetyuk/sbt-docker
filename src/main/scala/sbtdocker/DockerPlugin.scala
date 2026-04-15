@@ -13,6 +13,7 @@ object DockerPlugin extends AutoPlugin {
 
     @deprecated("Use imageNames instead.", "1.0.0")
     val imageName = DockerKeys.imageName
+
     val imageNames = DockerKeys.imageNames
     val buildOptions = DockerKeys.buildOptions
     val dockerBuildArguments = DockerKeys.dockerBuildArguments
@@ -30,12 +31,15 @@ object DockerPlugin extends AutoPlugin {
     val CopyFile = sbtdocker.staging.CopyFile
     type CopyFile = sbtdocker.staging.CopyFile
 
-    /**
-      * Settings to automatically build a Docker image for a JVM application.
-      * @param fromImage Base image to use. Should have a JVM on the PATH.
-      * @param exposedPorts List of ports to expose.
-      * @param exposedVolumes List of volumes to expose.
-      * @param username Username that should run the Java process.
+    /** Settings to automatically build a Docker image for a JVM application.
+      * @param fromImage
+      *   Base image to use. Should have a JVM on the PATH.
+      * @param exposedPorts
+      *   List of ports to expose.
+      * @param exposedVolumes
+      *   List of volumes to expose.
+      * @param username
+      *   Username that should run the Java process.
       */
     @deprecated("Use sbt-native-packager plugin instead.", "1.10.0")
     def dockerAutoPackageJavaApplication(
@@ -46,6 +50,7 @@ object DockerPlugin extends AutoPlugin {
     ): Seq[sbt.Def.Setting[_]] = {
       DockerSettings.autoPackageJavaApplicationSettings(fromImage, exposedPorts, exposedVolumes, username)
     }
+
   }
 
   override def projectSettings = DockerSettings.baseDockerSettings

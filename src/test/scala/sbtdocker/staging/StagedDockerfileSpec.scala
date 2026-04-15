@@ -6,6 +6,7 @@ import sbt._
 import sbtdocker.Instructions.{Expose, From, Maintainer}
 
 class StagedDockerfileSpec extends AnyFlatSpec with Matchers {
+
   "A staged Dockerfile" should "be empty from the start" in {
     val sdf = StagedDockerfile.empty
     sdf.instructions shouldBe empty
@@ -51,4 +52,5 @@ class StagedDockerfileSpec extends AnyFlatSpec with Matchers {
 
     sdf.instructionsString shouldEqual "FROM abc\nMAINTAINER xyz\nEXPOSE 80"
   }
+
 }

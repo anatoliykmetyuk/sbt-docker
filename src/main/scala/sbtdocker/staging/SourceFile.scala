@@ -35,4 +35,5 @@ case class CopyFile(file: File) extends SourceFile {
       StandardCopyOption.REPLACE_EXISTING
     )
   }
+
 }

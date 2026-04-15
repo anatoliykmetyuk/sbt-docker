@@ -7,6 +7,7 @@ import sbtdocker.Instructions._
 import scala.concurrent.duration._
 
 class InstructionsSpec extends AnyFlatSpec with Matchers {
+
   "From" should "create a correct string" in {
     From("image").toString shouldEqual "FROM image"
   }
@@ -121,4 +122,5 @@ class InstructionsSpec extends AnyFlatSpec with Matchers {
     ).toString shouldEqual "ONBUILD RUN /usr/local/bin/python-build --dir /app/src"
     Raw("COPY", "--from=stage1 /path/to/file /path/to/file").toString shouldEqual "COPY --from=stage1 /path/to/file /path/to/file"
   }
+
 }

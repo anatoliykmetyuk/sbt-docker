@@ -7,16 +7,22 @@ import scala.sys.process.{Process, ProcessLogger}
 
 object DockerBuild {
 
-  /**
-    * Build a Dockerfile using a provided docker binary.
+  /** Build a Dockerfile using a provided docker binary.
     *
-    * @param dockerfile Dockerfile to build
-    * @param processor processor to create a staging directory for the Dockerfile
-    * @param imageNames names of the resulting image
-    * @param stageDir stage dir
-    * @param dockerPath path to the docker binary
-    * @param buildOptions options for the build command
-    * @param log logger
+    * @param dockerfile
+    *   Dockerfile to build
+    * @param processor
+    *   processor to create a staging directory for the Dockerfile
+    * @param imageNames
+    *   names of the resulting image
+    * @param stageDir
+    *   stage dir
+    * @param dockerPath
+    *   path to the docker binary
+    * @param buildOptions
+    *   options for the build command
+    * @param log
+    *   logger
     */
   def apply(
     dockerfile: DockerfileBase,
@@ -39,15 +45,20 @@ object DockerBuild {
     }
   }
 
-  /**
-    * Build a Dockerfile using a provided docker binary.
+  /** Build a Dockerfile using a provided docker binary.
     *
-    * @param staged a staged Dockerfile to build.
-    * @param imageNames names of the resulting image
-    * @param stageDir stage dir
-    * @param dockerPath path to the docker binary
-    * @param buildOptions options for the build command
-    * @param log logger
+    * @param staged
+    *   a staged Dockerfile to build.
+    * @param imageNames
+    *   names of the resulting image
+    * @param stageDir
+    *   stage dir
+    * @param dockerPath
+    *   path to the docker binary
+    * @param buildOptions
+    *   options for the build command
+    * @param log
+    *   logger
     */
   def apply(
     staged: StagedDockerfile,
@@ -79,9 +90,8 @@ object DockerBuild {
   }
 
   private[sbtdocker] def prepareFiles(staged: StagedDockerfile) = {
-    staged.stageFiles.foreach {
-      case (source, destination) =>
-        source.stage(destination)
+    staged.stageFiles.foreach { case (source, destination) =>
+      source.stage(destination)
     }
   }
 
@@ -117,9 +127,8 @@ object DockerBuild {
       val load = if (buildOptions.platforms.isEmpty) Nil else List("--load")
       val buildOptionFlags = generateBuildOptionFlags(buildOptions)
       val buildKitFlags = if (buildKitSupport) List("--progress=plain") else Nil
-      val buildArgumentFlags = buildArguments.toList.flatMap {
-        case (key, value) =>
-          Seq(s"--build-arg", s"$key=$value")
+      val buildArgumentFlags = buildArguments.toList.flatMap { case (key, value) =>
+        Seq(s"--build-arg", s"$key=$value")
       }
       val command: Seq[String] = dockerPath ::
         buildX :::
@@ -215,6 +224,7 @@ object DockerBuild {
       case SuccessfullyBuiltNerdctl(id) => ImageId(id)
     }.lastOption
   }
+
 }
 
 class DockerBuildException(message: String) extends RuntimeException(message)

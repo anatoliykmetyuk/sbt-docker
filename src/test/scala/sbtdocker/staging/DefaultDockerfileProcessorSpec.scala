@@ -81,4 +81,5 @@ class DefaultDockerfileProcessorSpec extends AnyFlatSpec with Matchers {
       CopyFile(file("/other/file")) -> (stageDir / "4" / "file")
     )
   }
+
 }

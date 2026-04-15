@@ -25,4 +25,5 @@ object DockerTag {
       log.info(line)
     }
   }
+
 }

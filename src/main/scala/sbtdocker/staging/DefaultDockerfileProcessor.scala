@@ -3,9 +3,8 @@ package sbtdocker.staging
 import sbt._
 import sbtdocker._
 
-/**
-  * DockerfileProcessor that stages all files in the docker staging directory as `/{index}/file`.
-  * Where index is a counter that increases for each file that is staged.
+/** DockerfileProcessor that stages all files in the docker staging directory as `/{index}/file`. Where index is a counter that increases
+  * for each file that is staged.
   */
 object DefaultDockerfileProcessor extends DockerfileProcessor {
 
@@ -25,16 +24,15 @@ object DefaultDockerfileProcessor extends DockerfileProcessor {
         def fileStagePath(source: SourceFile, index: Int): String = (count + index) + "/" + source.filename
 
         val contextWithStagedFiles = {
-          val files = instruction.sources.zipWithIndex.map {
-            case (source, index) =>
-              source -> stageDir / fileStagePath(source, index)
+          val files = instruction.sources.zipWithIndex.map { case (source, index) =>
+            source -> stageDir / fileStagePath(source, index)
           }
           context.stageFiles(files.toSet)
         }
 
         val dockerInstruction = {
-          val sourcesInStaging = instruction.sources.zipWithIndex.map {
-            case (source, index) => fileStagePath(source, index)
+          val sourcesInStaging = instruction.sources.zipWithIndex.map { case (source, index) =>
+            fileStagePath(source, index)
           }
           instruction.dockerInstruction(sourcesInStaging)
         }
@@ -56,4 +54,5 @@ object DefaultDockerfileProcessor extends DockerfileProcessor {
       file(destination)
     }
   }
+
 }

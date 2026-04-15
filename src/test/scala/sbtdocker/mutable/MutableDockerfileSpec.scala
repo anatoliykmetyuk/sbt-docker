@@ -114,4 +114,5 @@ class MutableDockerfileSpec extends AnyFlatSpec with Matchers {
 
     dockerfile.instructions should contain theSameElementsInOrderAs instructions
   }
+
 }

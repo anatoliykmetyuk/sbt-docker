@@ -26,13 +26,18 @@ object BuildOptions {
 
 }
 
-/**
-  * Options for when building a Docker image.
-  * @param cache Use cache when building the image.
-  * @param removeIntermediateContainers Remove intermediate containers after a build.
-  * @param pullBaseImage Always attempts to pull a newer version of the base image.
-  * @param platforms Allows cross platform builds. Make sure that you already set docker's buildx up on the machine that uses this feature
-  * @param additionalArguments Provide any other arguments to the `docker build` task, see reference at https://docs.docker.com/engine/reference/commandline/build/#options. For example `Seq("--add-host", "127.0.0.1:12345", "--compress")`.
+/** Options for when building a Docker image.
+  * @param cache
+  *   Use cache when building the image.
+  * @param removeIntermediateContainers
+  *   Remove intermediate containers after a build.
+  * @param pullBaseImage
+  *   Always attempts to pull a newer version of the base image.
+  * @param platforms
+  *   Allows cross platform builds. Make sure that you already set docker's buildx up on the machine that uses this feature
+  * @param additionalArguments
+  *   Provide any other arguments to the `docker build` task, see reference at
+  *   https://docs.docker.com/engine/reference/commandline/build/#options. For example `Seq("--add-host", "127.0.0.1:12345", "--compress")`.
   */
 final case class BuildOptions(
   cache: Boolean = true,
@@ -42,18 +47,19 @@ final case class BuildOptions(
   additionalArguments: Seq[String] = Seq.empty
 )
 
-/**
-  * Id of an Docker image.
-  * @param id Id as a hexadecimal digit string.
+/** Id of an Docker image.
+  * @param id
+  *   Id as a hexadecimal digit string.
   */
 final case class ImageId(id: String) extends AnyVal {
   override def toString = id
 }
 
-/**
-  * The image digest, the format of the digest is `algorithm:hex-string`
-  * @param algorithm The algorithm used to produce the digest.
-  * @param digest A digest of the image, as a string.
+/** The image digest, the format of the digest is `algorithm:hex-string`
+  * @param algorithm
+  *   The algorithm used to produce the digest.
+  * @param digest
+  *   A digest of the image, as a string.
   */
 final case class ImageDigest(algorithm: String, digest: String) {
   override def toString = s"$algorithm:$digest"
@@ -61,8 +67,7 @@ final case class ImageDigest(algorithm: String, digest: String) {
 
 object ImageName {
 
-  /**
-    * Parse a [[sbtdocker.ImageName]] from a string.
+  /** Parse a [[sbtdocker.ImageName]] from a string.
     */
   def apply(name: String): ImageName = {
     val (registry, rest) = name.split("/", 3).toList match {
@@ -90,16 +95,19 @@ object ImageName {
 
     ImageName(registry, namespace, repo, tag)
   }
+
 }
 
-/**
-  * Name of a Docker image.
-  * Format: [registry/][namespace/]repository[:tag]
-  * Examples: `docker-registry.example.com/scala:2.11` or `example/scala:2.11`
-  * @param repository Name of the repository.
-  * @param registry Host and optionally port of the registry, example `docker-registry.example.com:5000`.
-  * @param namespace Namespace name.
-  * @param tag Tag, for example a version number.
+/** Name of a Docker image. Format: [registry/][namespace/]repository[:tag] Examples: `docker-registry.example.com/scala:2.11` or
+  * `example/scala:2.11`
+  * @param repository
+  *   Name of the repository.
+  * @param registry
+  *   Host and optionally port of the registry, example `docker-registry.example.com:5000`.
+  * @param namespace
+  *   Namespace name.
+  * @param tag
+  *   Tag, for example a version number.
   */
 final case class ImageName(
   registry: Option[String] = None,
@@ -117,4 +125,5 @@ final case class ImageName(
 
   @deprecated("Use toString instead.", "0.4.0")
   def name = toString
+
 }

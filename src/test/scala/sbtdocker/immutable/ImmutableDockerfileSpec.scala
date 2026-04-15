@@ -115,4 +115,5 @@ class ImmutableDockerfileSpec extends AnyFlatSpec with Matchers {
 
     dockerfile.instructions should contain theSameElementsInOrderAs instructions
   }
+
 }

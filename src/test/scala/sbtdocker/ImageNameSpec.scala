@@ -4,6 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 class ImageNameSpec extends AnyFlatSpec with Matchers {
+
   "A ImageName" should "parse 'registry.tld:5000/namespace/repository:tag'" in {
     val name = ImageName("registry.tld:5000/namespace/repository:tag")
     name shouldEqual ImageName(
@@ -66,4 +67,5 @@ class ImageNameSpec extends AnyFlatSpec with Matchers {
       tag = Some("v2")
     ).toString shouldEqual "registry.example.com/sbtdocker/test:v2"
   }
+
 }

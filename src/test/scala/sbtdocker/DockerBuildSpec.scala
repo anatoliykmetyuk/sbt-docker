@@ -172,4 +172,5 @@ class DockerBuildSpec extends AnyFreeSpec with Matchers {
       DockerBuild.parseImageId(lines) shouldEqual Some(ImageId("dada5485d85618e75ad1a9772c6c00523f442c8d30487fb7c9f9f9ea544db1db"))
     }
   }
+
 }
